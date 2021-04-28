@@ -1,0 +1,117 @@
+{% extends "common/sidebar.html" %}
+
+
+{% block site_title %}サイトのタイトル{% endblock %}
+
+
+{% block extra_head %}
+<script>console.log("追加のcssやjsがあればここにまとめて書く");</script>
+<style>
+    .sort {
+       float: right;
+       margin-right: 30%;
+       font-weight: bold;
+       color: chartreuse;
+    }
+</style>
+{% endblock %}
+
+
+
+{% block page_title %}{% endblock %}
+
+{% block main %}
+<main class="container">
+
+        <form method="GET">
+            <div>OR検索はチェックを入れる:<input type="checkbox" name="option" {% if request.GET.option %}checked{% endif %}></div>
+            <input type="text" name="search" value="{{ request.GET.search }}">
+            <input type="submit" value="検索">
+        </form>
+
+        <div>
+            <ul>
+                <li>mp4ファイルのみ対応しています。</li>
+                <li>ファイルサイズは上限200MBです。</li>
+            </ul>
+        </div>
+
+
+        <!--TIPS:ファイルをアップロードする場合、 enctype="multipart/form-data" をformタグに入れる。-->
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div>
+                <select name="category">
+                    {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                {% for tag in tags %}
+                <input id="{{ tag.id }}" type="checkbox" name="tag" value="{{ tag.id }}"><label for="{{ tag.id }}">{{ tag.name }}</label>
+                {% endfor %}
+            </div>
+
+            <div><input class = "form-text" placeholder="タイトル..." name="title" value="{{ request.POST.title }}"></div>
+
+            <div><textarea class="form-control" name="comment" placeholder="概要欄...">{{ video.comment }}</textarea></div>
+            <div>画像：<input type="file" accept=".jpg,.png" name="image"></div>
+            <div>動画：<input type="file" accept="video/mp4" name="movie"></div>
+            <input class="form-control my-2" type="submit" value="送信">
+
+        </form>
+
+            {% for video in videos %}
+        <div class="border">
+            <div>{{ video.id }}</div>
+
+            {% if video.edited %}
+            <p class="sort">Edited</p>
+            {% endif %}
+
+            <div>タイトル：{{ video.title }}</div>
+
+            <div>カテゴリ:{{ video.category }}</div>
+
+            <!--TIPS:複数選択されたタグを全て表示させる時はこのようにする。-->
+            <div>タグ:{% for tag in video.tag.all %}{{ tag }} {% endfor %}</div>
+
+            <div>概要欄 ：{{ video.comment }}</div>
+
+            <div> {% if video.edited %}更新日 ：{{ video.dt }}
+                  {% else %}投稿日 ：{{ video.dt }}
+                  {% endif %}
+            </div>
+
+            {% if video.image %}<div><img src="/media/{{ video.image }}" alt="投稿された画像"></div>{% endif %}
+            {% if video.movie %}<div><video src="/media/{{ video.movie }}" alt="投稿された動画" controls></video></div>{% endif %}
+
+
+            <a class="btn btn-danger" href="{% url 'tube:delete' video.id %}">削除</a>
+
+            <a class="btn btn-success" href="{% url 'tube:update' video.id %}">編集</a>
+
+        </div>
+      {% endfor %}
+
+
+
+
+</main>
+{% endblock %}
+
+
+
+
+
+{# ユーザーがログイン済みの場合、userのis_authenticated属性値で判定できる。 #}
+  {#% if user.is_authenticated %#}
+ {# <div>こんにちは{{ user.get_username }}さん</div> #}
+  {#% else %#}
+  {# <div>ログインしてください</div> #}
+  {#% endif %#}
+
+

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+         <title>削除ページ</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+
+    <style>
+        h2 {
+           color: red;
+           font-weight: bold;
+           }
+    </style>
+</head>
+
+<body>
+    <h2>Worning!</h2>
+    <div>
+        <p>一度削除すると、元に戻すことが出来ません。本当に削除しますか？</p>
+    </div>
+
+          <form action="{% url 'tube:delete' video.id %}" method ="POST" style="display:inline-block;">
+            {% csrf_token %}
+            <button class="btn btn-danger">Yes</button>
+          </form>
+
+           <a class="btn btn-success" href="{% url 'tube:index' %}">No</a>
+
+
+</body>
+</html>
